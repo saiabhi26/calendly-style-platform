@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 from app.deps import get_db
 from app.modules.auth import service
 from app.modules.auth.schemas import RegisterRequest, UserResponse
+from app.core.security import create_access_token   
+from app.modules.auth.schemas import LoginRequest, TokenResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -19,4 +21,16 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_409_CONFLICT,
             detail="An account with this email already exists.",
         )
-    return service.create_user(db, data)
+    return service.create_user(db, data)   
+
+
+@router.post("/login", response_model=TokenResponse)
+def login(data: LoginRequest, db: Session = Depends(get_db)):
+    user = service.authenticate_user(db, data.email, data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+        )
+    token = create_access_token(subject=str(user.id))
+    return TokenResponse(access_token=token)

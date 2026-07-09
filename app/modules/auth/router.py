@@ -6,6 +6,8 @@ from app.modules.auth import service
 from app.modules.auth.schemas import RegisterRequest, UserResponse
 from app.core.security import create_access_token   
 from app.modules.auth.schemas import LoginRequest, TokenResponse
+from app.deps import get_db, get_current_user   
+from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -34,3 +36,7 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
         )
     token = create_access_token(subject=str(user.id))
     return TokenResponse(access_token=token)
+
+@router.get("/me", response_model=UserResponse)
+def me(current_user: User = Depends(get_current_user)):
+    return current_user

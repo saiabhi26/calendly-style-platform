@@ -7,3 +7,7 @@ app.include_router(auth_router)
 @app.get("/health-check")
 def health_check():
     return {"status": "ok"}
+
+from app.modules.organization.router import router as org_router
+
+app.include_router(org_router)

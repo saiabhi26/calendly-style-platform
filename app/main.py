@@ -8,6 +8,7 @@ from app.modules.service.router import router as service_router
 from app.modules.availability.router import router as availability_router
 from app.modules.slot.router import router as slot_router
 from app.modules.booking.router import router as booking_router
+from app.modules.public.router import router as public_router
 
 app = FastAPI()
 
@@ -17,6 +18,7 @@ app.include_router(service_router)
 app.include_router(availability_router)
 app.include_router(slot_router)
 app.include_router(booking_router)
+app.include_router(public_router)
 
 
 @app.get("/health-check")

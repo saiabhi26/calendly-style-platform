@@ -33,3 +33,8 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 @app.get("/", include_in_schema=False)
 def index():
     return FileResponse("app/static/index.html")
+
+
+@app.get("/book", include_in_schema=False)
+def booking_page():
+    return FileResponse("app/static/booking.html")

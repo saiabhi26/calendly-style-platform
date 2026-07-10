@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book an appointment</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <hgroup>
+      <h1 id="org-name">Book an appointment</h1>
+      <p id="org-tagline"></p>
+    </hgroup>
+
+    <!-- Enter a business handle if none was provided in the URL (?org=slug) -->
+    <div id="slug-prompt">
+      <label>Business handle
+        <input id="slug-input" placeholder="e.g. acme">
+      </label>
+      <button id="slug-go">Go</button>
+    </div>
+
+    <div id="booking-flow" hidden>
+      <section>
+        <h3>1. Choose a service</h3>
+        <div id="service-list" class="chips"></div>
+      </section>
+
+      <section id="day-section" hidden>
+        <h3>2. Choose a day</h3>
+        <div id="day-list" class="chips"></div>
+      </section>
+
+      <section id="slot-section" hidden>
+        <h3>3. Choose a time</h3>
+        <div id="slot-list" class="chips"></div>
+        <p id="no-slots" hidden><em>No open times that day — try another.</em></p>
+      </section>
+
+      <section id="details-section" hidden>
+        <h3>4. Your details</h3>
+        <form id="booking-form">
+          <input name="customer_name" placeholder="Your name" required>
+          <input name="customer_email" type="email" placeholder="Your email" required>
+          <button type="submit">Confirm booking</button>
+        </form>
+      </section>
+    </div>
+
+    <section id="confirmation" hidden>
+      <article>
+        <h3>✅ Booking confirmed</h3>
+        <p id="confirmation-detail"></p>
+        <button id="book-another" class="secondary">Book another</button>
+      </article>
+    </section>
+
+    <div id="toast" hidden></div>
+  </main>
+
+  <script src="/static/booking.js"></script>
+</body>
+</html>

@@ -47,3 +47,38 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
+
+/* --- Booking page: chip pickers (services / days / slots) --- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.chip {
+  width: auto;
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: var(--pico-secondary-background);
+  color: var(--pico-color);
+  border: 1px solid var(--pico-muted-border-color);
+}
+.chip:hover {
+  border-color: var(--pico-primary);
+}
+.chip.selected {
+  background: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+  border-color: var(--pico-primary-background);
+}
+
+#slug-prompt {
+  display: flex;
+  gap: 0.5rem;
+  align-items: end;
+  max-width: 420px;
+}
+#slug-prompt button {
+  width: auto;
+}

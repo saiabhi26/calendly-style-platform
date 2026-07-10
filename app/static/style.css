@@ -1,0 +1,49 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+#org-list li {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+}
+#org-list li:hover {
+  background: var(--pico-secondary-background);
+}
+#org-list li.selected {
+  background: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+  font-weight: 600;
+}
+
+#service-list li {
+  list-style: none;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+.service-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.service-row button {
+  margin: 0;
+  width: auto;
+  padding: 0.25rem 0.75rem;
+}
+
+#toast {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}

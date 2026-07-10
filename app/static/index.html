@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appointment Booker — Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="container">
+    <hgroup>
+      <h1>Appointment Booker</h1>
+      <p>Owner dashboard</p>
+    </hgroup>
+
+    <!-- AUTH VIEW -->
+    <section id="auth-view">
+      <div class="grid">
+        <article>
+          <h3>Log in</h3>
+          <form id="login-form">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Log in</button>
+          </form>
+        </article>
+        <article>
+          <h3>Register</h3>
+          <form id="register-form">
+            <input type="text" name="full_name" placeholder="Full name (optional)">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Create account</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- DASHBOARD VIEW -->
+    <section id="dashboard-view" hidden>
+      <div class="topbar">
+        <span>Signed in as <strong id="user-email"></strong></span>
+        <button id="logout-btn" class="secondary">Log out</button>
+      </div>
+
+      <div class="grid">
+        <!-- Organizations -->
+        <article>
+          <h3>Organizations</h3>
+          <ul id="org-list"></ul>
+          <details>
+            <summary>New organization</summary>
+            <form id="org-form">
+              <input name="name" placeholder="Name" required>
+              <input name="slug" placeholder="slug-unique" required>
+              <input name="timezone" placeholder="Timezone" value="UTC">
+              <button type="submit">Create</button>
+            </form>
+          </details>
+        </article>
+
+        <!-- Services -->
+        <article>
+          <h3>Services <small id="services-for"></small></h3>
+          <p id="services-hint"><em>Select an organization to manage its services.</em></p>
+          <ul id="service-list"></ul>
+          <details id="service-create" hidden>
+            <summary>New service</summary>
+            <form id="service-form">
+              <input name="title" placeholder="Title" required>
+              <input name="duration_minutes" type="number" min="1" placeholder="Duration (minutes)" required>
+              <input name="price" type="number" step="0.01" min="0" placeholder="Price" value="0">
+              <select name="mode">
+                <option value="OFFLINE">OFFLINE</option>
+                <option value="ONLINE">ONLINE</option>
+              </select>
+              <button type="submit">Create</button>
+            </form>
+          </details>
+        </article>
+      </div>
+    </section>
+
+    <div id="toast" hidden></div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

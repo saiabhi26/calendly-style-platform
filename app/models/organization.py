@@ -22,3 +22,6 @@ class Organization(Base):
     )
 
     owner: Mapped["User"] = relationship(back_populates="organizations")
+    services: Mapped[list["Service"]] = relationship(
+        back_populates="organization", cascade="all, delete-orphan"
+    )

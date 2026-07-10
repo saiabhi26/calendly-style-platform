@@ -11,3 +11,7 @@ def health_check():
 from app.modules.organization.router import router as org_router
 
 app.include_router(org_router)
+
+from app.modules.service.router import router as service_router
+
+app.include_router(service_router)

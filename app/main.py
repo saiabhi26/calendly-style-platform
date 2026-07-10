@@ -5,12 +5,14 @@ from fastapi.responses import FileResponse
 from app.modules.auth.router import router as auth_router
 from app.modules.organization.router import router as org_router
 from app.modules.service.router import router as service_router
+from app.modules.availability.router import router as availability_router
 
 app = FastAPI()
 
 app.include_router(auth_router)
 app.include_router(org_router)
 app.include_router(service_router)
+app.include_router(availability_router)
 
 
 @app.get("/health-check")

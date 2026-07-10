@@ -25,3 +25,7 @@ class Organization(Base):
     services: Mapped[list["Service"]] = relationship(
         back_populates="organization", cascade="all, delete-orphan"
     )
+
+    availability_rules: Mapped[list["AvailabilityRule"]] = relationship(
+        back_populates="organization", cascade="all, delete-orphan"
+    )

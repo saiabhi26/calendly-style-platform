@@ -84,8 +84,8 @@ async function renderDays() {
 
   let openDays;
   try {
-    // Weekdays the org has availability for: 0=Mon … 6=Sun (Python convention)
-    openDays = new Set(await api(`/orgs/${orgSlug}/available-days`));
+    // Weekdays this service has availability for: 0=Mon … 6=Sun (Python convention)
+    openDays = new Set(await api(`/orgs/${orgSlug}/services/${selectedService.id}/available-days`));
   } catch (err) {
     toast(err.message, true);
     return;

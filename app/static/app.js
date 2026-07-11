@@ -144,15 +144,28 @@ async function selectOrg(org) {
 
   document.getElementById("availability-for").textContent = `— ${org.name}`;
   document.getElementById("availability-hint").hidden = true;
-  document.getElementById("availability-create").hidden = false;
+  document.getElementById("availability-body").hidden = false;
 
-  await loadServices();
+  await loadServices();   // also fills the availability service picker
   await loadAvailability();
 }
 
 async function loadServices() {
   if (!selectedOrgId) return;
   const services = await api(`/services?organization_id=${selectedOrgId}`);
+
+  // Keep the availability panel's service picker in sync with this org's services
+  const availSel = document.getElementById("availability-service");
+  const prev = availSel.value;
+  availSel.innerHTML = "";
+  services.forEach((s) => {
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.textContent = s.title;
+    availSel.appendChild(opt);
+  });
+  if (prev && [...availSel.options].some((o) => o.value === prev)) availSel.value = prev;
+
   const ul = document.getElementById("service-list");
   ul.innerHTML = "";
   if (services.length === 0) {
@@ -214,16 +227,20 @@ async function deleteService(id) {
   }
 }
 
-// --- Availability (scoped to the selected org) ---
+// --- Availability (per service) ---
 const DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 async function loadAvailability() {
-  if (!selectedOrgId) return;
-  const rules = await api(`/availability?organization_id=${selectedOrgId}`);
+  const serviceId = document.getElementById("availability-service").value;
   const ul = document.getElementById("availability-list");
   ul.innerHTML = "";
+  if (!serviceId) {
+    ul.innerHTML = "<li><em>Create a service first to set its availability.</em></li>";
+    return;
+  }
+  const rules = await api(`/availability?service_id=${serviceId}`);
   if (rules.length === 0) {
-    ul.innerHTML = "<li><em>No availability set.</em></li>";
+    ul.innerHTML = "<li><em>No availability set for this service.</em></li>";
     return;
   }
   rules.forEach((r) => {
@@ -246,10 +263,14 @@ async function loadAvailability() {
   });
 }
 
+// Reload availability when the chosen service changes
+document.getElementById("availability-service").addEventListener("change", loadAvailability);
+
 document.getElementById("availability-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!selectedOrgId) {
-    toast("Select an organization first.", true);
+  const serviceId = document.getElementById("availability-service").value;
+  if (!serviceId) {
+    toast("Create a service first.", true);
     return;
   }
   const f = new FormData(e.target);
@@ -257,7 +278,7 @@ document.getElementById("availability-form").addEventListener("submit", async (e
     await api("/availability", {
       method: "POST",
       body: JSON.stringify({
-        organization_id: selectedOrgId,
+        service_id: Number(serviceId),
         day_of_week: Number(f.get("day_of_week")),
         start_time: f.get("start_time"),
         end_time: f.get("end_time"),

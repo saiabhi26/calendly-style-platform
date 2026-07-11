@@ -35,6 +35,7 @@
           </form>
         </article>
       </div>
+      <p class="customer-cta">Looking to book an appointment? <a href="/book">Go to the booking page →</a></p>
     </section>
 
     <!-- DASHBOARD VIEW -->
@@ -80,32 +81,37 @@
           </details>
         </article>
 
-        <!-- Availability -->
+        <!-- Availability (per service) -->
         <article>
           <h3>Availability <small id="availability-for"></small></h3>
-          <p id="availability-hint"><em>Select an organization to set its weekly hours.</em></p>
-          <ul id="availability-list"></ul>
-          <details id="availability-create" hidden>
-            <summary>New availability rule</summary>
-            <form id="availability-form">
-              <select name="day_of_week" required>
-                <option value="0">Monday</option>
-                <option value="1">Tuesday</option>
-                <option value="2">Wednesday</option>
-                <option value="3">Thursday</option>
-                <option value="4">Friday</option>
-                <option value="5">Saturday</option>
-                <option value="6">Sunday</option>
-              </select>
-              <label>Start
-                <input name="start_time" type="time" required>
-              </label>
-              <label>End
-                <input name="end_time" type="time" required>
-              </label>
-              <button type="submit">Create</button>
-            </form>
-          </details>
+          <p id="availability-hint"><em>Select an organization to set availability.</em></p>
+          <div id="availability-body" hidden>
+            <label>Service
+              <select id="availability-service"></select>
+            </label>
+            <ul id="availability-list"></ul>
+            <details id="availability-create">
+              <summary>New availability rule</summary>
+              <form id="availability-form">
+                <select name="day_of_week" required>
+                  <option value="0">Monday</option>
+                  <option value="1">Tuesday</option>
+                  <option value="2">Wednesday</option>
+                  <option value="3">Thursday</option>
+                  <option value="4">Friday</option>
+                  <option value="5">Saturday</option>
+                  <option value="6">Sunday</option>
+                </select>
+                <label>Start
+                  <input name="start_time" type="time" required>
+                </label>
+                <label>End
+                  <input name="end_time" type="time" required>
+                </label>
+                <button type="submit">Create</button>
+              </form>
+            </details>
+          </div>
         </article>
       </div>
     </section>

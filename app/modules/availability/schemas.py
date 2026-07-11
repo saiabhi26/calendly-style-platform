@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class AvailabilityRuleCreate(BaseModel):
-    organization_id: int
+    service_id: int
     day_of_week: int = Field(ge=0, le=6)
     start_time: time
     end_time: time
@@ -18,7 +18,7 @@ class AvailabilityRuleCreate(BaseModel):
 
 class AvailabilityRuleResponse(BaseModel):
     id: int
-    organization_id: int
+    service_id: int
     day_of_week: int
     start_time: time
     end_time: time

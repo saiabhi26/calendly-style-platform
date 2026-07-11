@@ -15,10 +15,10 @@ def generate_slots(db: Session, service: Service, target_date: date_type) -> lis
     duration = timedelta(minutes=service.duration_minutes)
     now = datetime.now(tz)
 
-    # 1. This org's availability windows for that weekday
+    # 1. This service's availability windows for that weekday
     rules = db.scalars(
         select(AvailabilityRule).where(
-            AvailabilityRule.organization_id == service.organization_id,
+            AvailabilityRule.service_id == service.id,
             AvailabilityRule.day_of_week == weekday,
         )
     ).all()

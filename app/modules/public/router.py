@@ -31,13 +31,18 @@ def list_services(slug: str, db: Session = Depends(get_db)):
     return list(db.scalars(select(Service).where(Service.organization_id == org.id)))
 
 
-@router.get("/{slug}/available-days", response_model=list[int])
-def available_days(slug: str, db: Session = Depends(get_db)):
-    """Distinct weekdays (0=Mon … 6=Sun) the org has any availability rule for."""
+@router.get("/{slug}/services/{service_id}/available-days", response_model=list[int])
+def service_available_days(slug: str, service_id: int, db: Session = Depends(get_db)):
+    """Distinct weekdays (0=Mon … 6=Sun) the given service has any availability rule for."""
     org = _get_org_or_404(db, slug)
+    service = db.scalar(
+        select(Service).where(Service.id == service_id, Service.organization_id == org.id)
+    )
+    if service is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Service not found.")
     rows = db.scalars(
         select(AvailabilityRule.day_of_week)
-        .where(AvailabilityRule.organization_id == org.id)
+        .where(AvailabilityRule.service_id == service_id)
         .distinct()
     )
     return sorted(rows)

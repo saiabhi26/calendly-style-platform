@@ -1,0 +1,19 @@
+# Render Blueprint — describes the deployed services as version-controlled config.
+# Database lives on Neon (free & persistent); DATABASE_URL is set manually in the
+# Render dashboard, so it's marked sync:false here.
+services:
+  - type: web
+    name: appointment-booker
+    runtime: docker
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false                 # paste the Neon connection string in the dashboard
+      - key: JWT_SECRET
+        generateValue: true         # Render generates a strong random value
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "60"

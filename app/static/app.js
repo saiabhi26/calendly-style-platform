@@ -141,7 +141,13 @@ async function selectOrg(org) {
   document.getElementById("services-for").textContent = `— ${org.name}`;
   document.getElementById("services-hint").hidden = true;
   document.getElementById("service-create").hidden = false;
+
+  document.getElementById("availability-for").textContent = `— ${org.name}`;
+  document.getElementById("availability-hint").hidden = true;
+  document.getElementById("availability-create").hidden = false;
+
   await loadServices();
+  await loadAvailability();
 }
 
 async function loadServices() {
@@ -203,6 +209,73 @@ async function deleteService(id) {
     await api(`/services/${id}`, { method: "DELETE" });
     toast("Service deleted.");
     await loadServices();
+  } catch (err) {
+    toast(err.message, true);
+  }
+}
+
+// --- Availability (scoped to the selected org) ---
+const DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+async function loadAvailability() {
+  if (!selectedOrgId) return;
+  const rules = await api(`/availability?organization_id=${selectedOrgId}`);
+  const ul = document.getElementById("availability-list");
+  ul.innerHTML = "";
+  if (rules.length === 0) {
+    ul.innerHTML = "<li><em>No availability set.</em></li>";
+    return;
+  }
+  rules.forEach((r) => {
+    const li = document.createElement("li");
+    const row = document.createElement("div");
+    row.className = "service-row";
+
+    const span = document.createElement("span");
+    // start_time / end_time come back as "HH:MM:SS" — show HH:MM
+    span.textContent = `${DAY_NAMES[r.day_of_week]} · ${r.start_time.slice(0, 5)}–${r.end_time.slice(0, 5)}`;
+
+    const btn = document.createElement("button");
+    btn.textContent = "Delete";
+    btn.className = "secondary outline";
+    btn.addEventListener("click", () => deleteAvailabilityRule(r.id));
+
+    row.append(span, btn);
+    li.appendChild(row);
+    ul.appendChild(li);
+  });
+}
+
+document.getElementById("availability-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!selectedOrgId) {
+    toast("Select an organization first.", true);
+    return;
+  }
+  const f = new FormData(e.target);
+  try {
+    await api("/availability", {
+      method: "POST",
+      body: JSON.stringify({
+        organization_id: selectedOrgId,
+        day_of_week: Number(f.get("day_of_week")),
+        start_time: f.get("start_time"),
+        end_time: f.get("end_time"),
+      }),
+    });
+    toast("Availability rule added.");
+    e.target.reset();
+    await loadAvailability();
+  } catch (err) {
+    toast(err.message, true);
+  }
+});
+
+async function deleteAvailabilityRule(id) {
+  try {
+    await api(`/availability/${id}`, { method: "DELETE" });
+    toast("Availability rule deleted.");
+    await loadAvailability();
   } catch (err) {
     toast(err.message, true);
   }

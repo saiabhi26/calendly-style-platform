@@ -12,30 +12,22 @@ This project began as a Python/FastAPI reimplementation of a Node appointment-bo
 - **Phase 4** — Services (per-org, ONLINE/OFFLINE, decimal price).
 - **Phase 5** — Availability rules (weekly hours, cross-field validation).
 - **Phase 6** — Slot generation + public bookings, with a DB unique-constraint double-booking guard.
-- **Web frontends** — owner dashboard (`/`) and customer booking page (`/book`), served by FastAPI.
+- **Web frontends** — owner dashboard (`/`, incl. availability management) and customer booking page (`/book`), served by FastAPI.
 - **Booking-page day picker** filtered to the org's available weekdays.
+- **Deployed** live on Render + Neon with auto-deploy on push (see Stage 1).
 
 ---
 
-## Stage 1 — Deploy (free: Render + Neon) 🚀
+## Stage 1 — Deploy (Render + Neon) ✅ done
 
-Goal: a live public URL, running the containerized app against a persistent free Postgres.
+**Live at https://appointment-booker-nmkz.onrender.com** — containerized app on Render's free tier, backed by a free & persistent Neon Postgres. Auto-deploys on push to `main`.
 
-**Prep (files added to the repo):**
-- [ ] `Dockerfile` — package the web app into a container image.
-- [ ] `.dockerignore` — keep `.venv`, `.git`, `.env` out of the image.
-- [ ] `render.yaml` — Blueprint describing the web service (reproducible setup).
-- [x] `config.py` — normalize `DATABASE_URL` (`postgres://` → `postgresql+psycopg2://`).
+- [x] `Dockerfile`, `.dockerignore`, `render.yaml` (Blueprint)
+- [x] `config.py` normalizes `DATABASE_URL`; engine uses `pool_pre_ping` for serverless Postgres
+- [x] Public GitHub repo, Neon project, Render web service + env vars
+- [x] Container runs `alembic upgrade head` then serves on each deploy
 
-**Deploy flow:**
-- [ ] Push repo to GitHub (public, so it's visible to recruiters).
-- [ ] Create a **Neon** Postgres project → copy its connection string. (Free & persistent — no 90-day expiry.)
-- [ ] Create a **Render** Web Service from the repo (Docker build).
-- [ ] Set env vars on Render: `DATABASE_URL` (Neon), a strong `JWT_SECRET`, `JWT_REFRESH_SECRET`, etc.
-- [ ] Deploy → container runs `alembic upgrade head` then starts the server → live URL.
-- [ ] Verify `/docs`, `/`, `/book` on the live URL.
-
-**Free-tier notes:** Render's free web service sleeps after ~15 min idle (wakes on first request). Neon auto-suspends when idle and resumes on connect. Both fine for a portfolio.
+**Free-tier notes:** Render's free web service sleeps after ~15 min idle (first request wakes it, ~30s). Neon auto-suspends when idle and resumes on connect.
 
 ---
 
@@ -51,14 +43,16 @@ Goal: automated tests + lint on every PR, auto-deploy on merge.
 
 ---
 
-## Stage 3 — UI polish 🎨
+## Stage 3 — UI (keep it simple) 🎨
 
-- [ ] Nicer styling on the owner dashboard and booking page (once live and CI-protected).
+Frontend is intentionally minimal — clean and legible, nothing fancy. This is a backend-focused project; effort goes into the API, architecture, and deployment.
+- [ ] Light styling pass on the dashboard and booking page for readability (no heavy redesign).
 
 ---
 
 ## Stage 4 — Later feature phases
 
+- [ ] **Per-service availability** — availability is currently org-level (all services share the org's weekly hours). Move it to per-service so each service has its own schedule. Change: add `service_id` to `availability_rules` + migration + update slot generation, the available-days endpoint, and the dashboard panel.
 - [ ] **Phase 7** — Async confirmation email (Celery + Redis via **Upstash** + Resend). Adds a background-worker service on Render.
 - [ ] **Phase 8** — Payments (Razorpay): create order on booking, verify webhook signature.
 - [ ] **Phase 9** — Google Calendar / Meet (OAuth2, create event + Meet link in a worker).

@@ -77,14 +77,33 @@ function selectService(svc, chipEl) {
   renderDays();
 }
 
-// --- Step 2: show the next 14 days as chips (your "choose a day" idea) ---
-function renderDays() {
+// --- Step 2: show only the next-14 days the org is actually open ---
+async function renderDays() {
   const wrap = document.getElementById("day-list");
   wrap.innerHTML = "";
+
+  let openDays;
+  try {
+    // Weekdays the org has availability for: 0=Mon … 6=Sun (Python convention)
+    openDays = new Set(await api(`/orgs/${orgSlug}/available-days`));
+  } catch (err) {
+    toast(err.message, true);
+    return;
+  }
+  if (openDays.size === 0) {
+    wrap.innerHTML = "<p><em>This business hasn't set any availability yet.</em></p>";
+    return;
+  }
+
   const fmt = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" });
+  let shown = 0;
   for (let i = 0; i < 14; i++) {
     const d = new Date();
     d.setDate(d.getDate() + i);
+    // JS getDay(): Sun=0 … Sat=6  ->  Python weekday(): Mon=0 … Sun=6
+    const pyWeekday = (d.getDay() + 6) % 7;
+    if (!openDays.has(pyWeekday)) continue; // skip closed days
+
     // Build YYYY-MM-DD from local parts (avoids UTC off-by-one from toISOString)
     const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     const chip = document.createElement("button");
@@ -92,6 +111,10 @@ function renderDays() {
     chip.textContent = i === 0 ? "Today" : fmt.format(d);
     chip.addEventListener("click", () => selectDay(value, chip));
     wrap.appendChild(chip);
+    shown++;
+  }
+  if (shown === 0) {
+    wrap.innerHTML = "<p><em>No open days in the next two weeks.</em></p>";
   }
 }
 

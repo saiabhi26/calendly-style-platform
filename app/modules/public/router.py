@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.deps import get_db
 from app.models.organization import Organization
 from app.models.service import Service
+from app.models.availability_rule import AvailabilityRule
 from app.modules.organization.schemas import OrganizationResponse
 from app.modules.service.schemas import ServiceResponse
 
@@ -28,3 +29,15 @@ def get_org(slug: str, db: Session = Depends(get_db)):
 def list_services(slug: str, db: Session = Depends(get_db)):
     org = _get_org_or_404(db, slug)
     return list(db.scalars(select(Service).where(Service.organization_id == org.id)))
+
+
+@router.get("/{slug}/available-days", response_model=list[int])
+def available_days(slug: str, db: Session = Depends(get_db)):
+    """Distinct weekdays (0=Mon … 6=Sun) the org has any availability rule for."""
+    org = _get_org_or_404(db, slug)
+    rows = db.scalars(
+        select(AvailabilityRule.day_of_week)
+        .where(AvailabilityRule.organization_id == org.id)
+        .distinct()
+    )
+    return sorted(rows)

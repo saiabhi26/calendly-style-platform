@@ -13,7 +13,8 @@ This project began as a Python/FastAPI reimplementation of a Node appointment-bo
 - **Phase 5** — Availability rules (weekly hours, cross-field validation).
 - **Phase 6** — Slot generation + public bookings, with a DB unique-constraint double-booking guard.
 - **Web frontends** — owner dashboard (`/`, incl. availability management) and customer booking page (`/book`), served by FastAPI.
-- **Booking-page day picker** filtered to the org's available weekdays.
+- **Per-service availability** — each service has its own weekly hours (availability moved from org-level to per-service; slot generation, public endpoints, and dashboard updated).
+- **Booking-page day picker** filtered to the selected service's available weekdays.
 - **Deployed** live on Render + Neon with auto-deploy on push (see Stage 1).
 
 ---
@@ -31,15 +32,15 @@ This project began as a Python/FastAPI reimplementation of a Node appointment-bo
 
 ---
 
-## Stage 2 — CI/CD (GitHub Actions) ⚙️
+## Stage 2 — CI/CD (GitHub Actions) ✅ done
 
 Goal: automated tests + lint on every PR, auto-deploy on merge.
 
-- [ ] Add a **pytest** suite under `tests/` (test DB): auth, ownership scoping, booking + double-booking.
-- [ ] Add `ruff` for linting.
-- [ ] `.github/workflows/ci.yml` — on push/PR: start a Postgres service → `alembic upgrade head` → `pytest` → `ruff`.
-- [ ] Enable Render auto-deploy on push to `main` (**CD** — built in).
-- [ ] Add a CI status badge to the README.
+- [x] **pytest** suite under `tests/` (real Postgres test DB): auth, ownership scoping, booking + double-booking.
+- [x] `ruff` for linting (config in `pyproject.toml`).
+- [x] `.github/workflows/ci.yml` — on push/PR: start a Postgres service → `ruff` → `alembic upgrade head` → `pytest`.
+- [x] Render auto-deploy on push to `main` (**CD** — built in).
+- [x] CI status badge in the README.
 
 ---
 
@@ -52,7 +53,6 @@ Frontend is intentionally minimal — clean and legible, nothing fancy. This is 
 
 ## Stage 4 — Later feature phases
 
-- [ ] **Per-service availability** — availability is currently org-level (all services share the org's weekly hours). Move it to per-service so each service has its own schedule. Change: add `service_id` to `availability_rules` + migration + update slot generation, the available-days endpoint, and the dashboard panel.
 - [ ] **Phase 7** — Async confirmation email (Celery + Redis via **Upstash** + Resend). Adds a background-worker service on Render.
 - [ ] **Phase 8** — Payments (Razorpay): create order on booking, verify webhook signature.
 - [ ] **Phase 9** — Google Calendar / Meet (OAuth2, create event + Meet link in a worker).

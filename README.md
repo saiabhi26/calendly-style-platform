@@ -1,5 +1,7 @@
 # Appointment Booker SaaS
 
+[![CI](https://github.com/saiabhi26/calendly-style-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/saiabhi26/calendly-style-platform/actions/workflows/ci.yml)
+
 A multi-tenant appointment-booking backend (Calendly-style) built with **FastAPI** and **PostgreSQL**. Business owners manage organizations, services, and weekly availability; customers book open time-slots through a public page — with database-enforced protection against double-booking.
 
 **🔗 Live demo:** https://appointment-booker-nmkz.onrender.com

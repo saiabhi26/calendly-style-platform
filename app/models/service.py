@@ -1,10 +1,17 @@
 from decimal import Decimal
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import String, Integer, Numeric, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.organization import Organization
+    from app.models.booking import Booking
+    from app.models.availability_rule import AvailabilityRule
+
 
 class Service(Base):
     __tablename__ = "services"

@@ -8,3 +8,6 @@ exclude = ["alembic"]
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+# Put the repo root on sys.path so `import app` works under the bare `pytest`
+# console script (which, unlike `python -m pytest`, doesn't add the cwd).
+pythonpath = ["."]

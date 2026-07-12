@@ -6,6 +6,24 @@ Each entry: **Symptom** (what we saw) → **Cause** (why) → **Fix** (what solv
 
 ---
 
+## 2026-07-11 — CI failed to collect tests: "ModuleNotFoundError: No module named 'app'"
+
+**Symptom:** The pytest suite passed locally but the GitHub Actions run failed while *loading* `tests/conftest.py`, before any test ran:
+`ImportError while loading conftest ... from app.main import app → ModuleNotFoundError: No module named 'app'`.
+
+**Cause:** Invocation difference. Locally we ran `python -m pytest`; the `-m` form puts the current directory (repo root) on `sys.path`, so `import app` resolved. CI ran the bare `pytest` console script, which does **not** add the cwd — with no `tests/__init__.py` and the default import mode, pytest only put the `tests/` dir on the path, so the top-level `app` package was invisible.
+
+**Fix:** Make it invocation-independent via pytest config in `pyproject.toml`:
+```toml
+[tool.pytest.ini_options]
+pythonpath = ["."]
+```
+This puts the repo root on `sys.path` for both `pytest` and `python -m pytest`. Reproduced the failure locally first by running the *bare* `.venv/bin/pytest` (not `python -m pytest`), confirmed the fix, then pushed.
+
+**Lesson:** `pytest` and `python -m pytest` don't share the same `sys.path`, so "passes locally, fails in CI on import" is a classic invocation mismatch. Set `pythonpath` in config rather than relying on how you happen to launch it — and when reproducing a CI failure, run the *exact* command CI runs.
+
+---
+
 ## 2026-07-11 — Production 500 on register: "SSL connection has been closed unexpectedly"
 
 **Symptom:** Register/login worked locally but returned `500 Internal Server Error` on the deployed (Render) app. Render logs showed:
